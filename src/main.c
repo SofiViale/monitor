@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
 /**
  * @brief Señal para recargar la configuración.
@@ -127,8 +128,8 @@ void read_config(const char* config_filename)
         return;
     }
 
-    show_cpu_usage = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "cpu_usage"));
-    show_memory_usage = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "memory_usage"));
+    show_cpu_usage = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "cpu"));
+    show_memory_usage = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "memory"));
     show_disk_io = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "disk_io"));
     show_network_stats = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "network_stats"));
     show_process_count = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(metrics_json, "process_count"));
@@ -152,8 +153,15 @@ int main(int argc, char* argv[])
     signal(SIGUSR1, handle_signal);
     signal(SIGINT, handle_signal);
 
+    if (argc < 2) {
+        fprintf(stderr, "Uso: %s <ruta_al_archivo_config.json>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    const char* config_filename = argv[1];
+
     // Leer la configuración inicial
-    read_config("config.json");
+    read_config(config_filename);
 
     // Creamos un hilo para exponer las métricas vía HTTP
     pthread_t tid;
@@ -171,7 +179,7 @@ int main(int argc, char* argv[])
         if (reload_config)
         {
             // Volver a leer la configuración
-            read_config("config.json");
+            read_config(config_filename);
             reload_config = 0;
         }
 
