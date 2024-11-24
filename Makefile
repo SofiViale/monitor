@@ -20,8 +20,8 @@ export LD_LIBRARY_PATH := $(PROMETHEUS_LIB_DIR):$(LD_LIBRARY_PATH)
 all: $(TARGET)
 
 $(TARGET): $(SRCS)
-    $(CC) $(SRCS) -o $(TARGET) $(CFLAGS) $(LDFLAGS)
+	$(CC) $(SRCS) -o $(TARGET) $(CFLAGS) $(LDFLAGS)
 
 clean:
-    rm -f $(TARGET)
-    rm -rf $(PROMETHEUS_DIR)
+	rm -f $(TARGET)
+	rm -rf $(PROMETHEUS_DIR)
