@@ -4,7 +4,6 @@
  */
 
 #include "metrics.h"
-// #include "read_cpu_usage.h"
 #include <errno.h>
 #include <prom.h>
 #include <promhttp.h>
@@ -53,6 +52,11 @@ void update_process_count_gauge();
  * @brief Actualiza la métrica de cambios de contexto.
  */
 void update_context_switches_gauge();
+
+/**
+ * @brief Actualiza la métrica de tasa de fragmentación de memoria.
+ */
+void update_fragmentation_gauge();
 
 /**
  * @brief Función del hilo para exponer las métricas vía HTTP en el puerto 8000.

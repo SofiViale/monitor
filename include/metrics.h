@@ -81,3 +81,13 @@ int get_process_count();
  * @return Número de cambios de contexto, o 0 en caso de error.
  */
 unsigned long long get_context_switches();
+
+/**
+ * @brief Obtiene la tasa de fragmentación de memoria.
+ *
+ * Calcula la tasa de fragmentación de memoria utilizando la función measure_fragmentation
+ * de efficiency_tests.c.
+ *
+ * @return Tasa de fragmentación de memoria, o -1.0 en caso de error.
+ */
+double get_fragmentation_rate();

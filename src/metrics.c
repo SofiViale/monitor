@@ -1,4 +1,5 @@
 #include "../include/metrics.h"
+#include "efficiency_tests.h"
 
 #define MEMINFO_PATH "/proc/meminfo"
 #define STAT_PATH "/proc/stat"
@@ -6,6 +7,10 @@
 #define NETDEV_PATH "/proc/net/dev"
 #define BUFFER_SIZE 256
 #define CPU_FIELDS 8
+
+double get_fragmentation_rate() {
+    return measure_fragmentation();
+}
 
 double get_memory_usage()
 {

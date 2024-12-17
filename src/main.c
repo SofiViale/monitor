@@ -201,6 +201,8 @@ int main(int argc, char* argv[])
             update_context_switches_gauge();
         }
 
+        update_fragmentation_gauge();
+        
         sleep(interval);
     }
 

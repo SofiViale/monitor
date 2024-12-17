@@ -1,4 +1,5 @@
 #include "../include/expose_metrics.h"
+#include "../include/metrics.h"
 
 #define HTTP_PORT 8000
 #define SLEEP_DURATION 1
@@ -22,6 +23,7 @@ static prom_gauge_t* disk_read_metric;
 static prom_gauge_t* disk_write_metric;
 static prom_gauge_t* network_rx_metric;
 static prom_gauge_t* network_tx_metric;
+static prom_gauge_t* fragmentation_metric;
 
 void update_cpu_gauge()
 {
@@ -151,6 +153,17 @@ void update_context_switches_gauge()
     }
 }
 
+void update_fragmentation_gauge() {
+    double fragmentation = get_fragmentation_rate();
+    if (fragmentation >= 0) {
+        pthread_mutex_lock(&lock);
+        prom_gauge_set(fragmentation_metric, fragmentation, NULL);
+        pthread_mutex_unlock(&lock);
+    } else {
+        fprintf(stderr, "Error al obtener la tasa de fragmentación\n");
+    }
+}
+
 int init_metrics()
 {
     // Inicializamos el mutex
@@ -247,6 +260,13 @@ int init_metrics()
         return EXIT_FAILURE;
     }
 
+    // Crear la métrica para la tasa de fragmentación
+    fragmentation_metric = prom_gauge_new("memory_fragmentation_rate", "Tasa de fragmentación de memoria", 0, NULL);
+    if (fragmentation_metric == NULL) {
+        fprintf(stderr, "Error al crear la métrica de fragmentación de memoria\n");
+        return EXIT_FAILURE;
+    }
+
     // Registramos las métricas en el registro por defecto
     prom_collector_registry_must_register_metric(cpu_usage_metric);
     prom_collector_registry_must_register_metric(memory_usage_metric);
@@ -259,6 +279,7 @@ int init_metrics()
     prom_collector_registry_must_register_metric(disk_write_metric);
     prom_collector_registry_must_register_metric(network_rx_metric);
     prom_collector_registry_must_register_metric(network_tx_metric);
+    prom_collector_registry_must_register_metric(fragmentation_metric);
 
     return EXIT_SUCCESS;
 }
